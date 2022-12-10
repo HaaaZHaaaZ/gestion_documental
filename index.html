@@ -1,0 +1,211 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="index.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous" />
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+</head>
+
+<body>
+  <header>
+    <div class="izquierda">
+      <div class="centrado">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <div>Gestión Documental</div>
+
+      </div>
+    </div>
+  </header>
+
+
+  <div class="container" id="app">
+
+
+    <div class="container codigo ">
+      <h2>Consulta obtenida desde MongoDB</h2>
+      <div class="codigoobtenido centrado sombra">
+        {{info}}
+      </div>
+
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm-12 headertabla ">
+        <h1 class="animate__animated animate__heartBeat animate__infinite animate__slow">Documentación</h1>
+        <button type="button" class="btn  btn-success" data-bs-toggle="modal" data-bs-target="#agregar">Agregar
+          nuevo</button>
+
+
+      </div>
+      <div class="container-sm">
+        <table class="table table-success table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre del Documento</th>
+              <th>Tipo</th>
+              <th>Fecha</th>
+              <th class="centrado">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr  v-for="usuario in info" >
+              <td>{{ usuario._id }}</td>
+              <td>{{ usuario.Nombre }}</td>
+              <td>{{ usuario.Tipo }}</td>
+              <td>{{ usuario.Fecha }}</td>
+              <td class="acciones">
+                <button type="button" class="btn  btn-success" data-bs-toggle="modal" data-bs-target="#actualizar" v-bind:id="usuario._id" onclick="cargaractualizar(this)">Editar
+                </button>
+                <button type="button" class="btn  btn-danger"  onclick="eliminar(this)" v-bind:id="usuario._id"> Eliminar
+                </button>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- Button trigger modal -->
+
+
+  <!-- Modal  Agregar-->
+  <div class="modal fade" id="agregar" tabindex="-1" aria-labelledby="agregarLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="agregarLabel">Agregar Documento</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form   autocomplete="off">
+            <div class="mb-3">
+              <label for="namedocument" class="form-label">Nombre del documento</label>
+              <input type="text" class="form-control" id="namedocument" aria-describedby="Nombre del documento">
+              <div id="documentHelp" class="form-text">Ingresa el nombre del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipodocument" class="form-label">Tipo</label>
+              <input type="text" class="form-control" id="tipodocument" aria-describedby="Tipo del documento">
+              <div id="tipoHelp" class="form-text">Ingresa el tipo del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="areadocument" class="form-label">Area</label>
+              <input type="text" class="form-control" id="areadocument" aria-describedby="Tipo del documento">
+              <div id="areaHelp" class="form-text">Ingresa el Area del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="fechacument" class="form-label">Fecha</label>
+              <input type="date" class="form-control" id="fechadocument" aria-describedby="Fecha del documento">
+              <div id="fechaHelp" class="form-text">Ingresa la fecha del documento </div>
+            </div>
+ 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+          <button type="submit" class="btn btn-primary" onclick="createPost()">Agregar</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal  Agregar-->
+
+  <!-- Modal  Actualizar-->
+  <div class="modal fade" id="actualizar" tabindex="-1" aria-labelledby="actualizarLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="actualizarLabel">Actualizar Documento</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form   autocomplete="off">
+            <div class="mb-3">
+              <label for="iddocumentupdate" class="form-label">ID</label>
+              <input type="text" class="form-control" id="iddocumentupdate" aria-describedby="ID del documento"  disabled>
+              <div id="idHelp" class="form-text">ID del documento </div>
+            </div>
+            <div class="mb-3">
+              <label for="namedocument" class="form-label">Nombre del documento</label>
+              <input type="text" class="form-control" id="namedocumentupdate" aria-describedby="Nombre del documento" >
+              <div id="documentHelp" class="form-text">Ingresa el nombre del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipodocument" class="form-label">Tipo</label>
+              <input type="text" class="form-control" id="tipodocumentupdate" aria-describedby="Tipo del documento">
+              <div id="tipoHelp" class="form-text">Ingresa el tipo del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="areadocument" class="form-label">Area</label>
+              <input type="text" class="form-control" id="areadocumentupdate" aria-describedby="Tipo del documento">
+              <div id="areaHelp" class="form-text">Ingresa el Area del documento </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="fechacument" class="form-label">Fecha</label>
+              <input type="date" class="form-control" id="fechadocumentupdate" aria-describedby="Fecha del documento">
+              <div id="fechaHelp" class="form-text">Ingresa la fecha del documento </div>
+            </div>
+ 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+          <button type="submit" class="btn btn-primary" onclick="actualizar(this)">Actualizar</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal  editar-->
+
+
+<!-- ++++++++++++++ TOAST +++++++++++ -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ++++++++++++++ TOAST +++++++++++ -->
+  <script src="index.js"></script>
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
